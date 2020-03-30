@@ -144,18 +144,17 @@ const initSQL = [
       data text not null
     )
   `,
-  `
-    alter table mapruns add kills number
-  `,
+  `alter table mapruns add kills number`,
   `
     create table if not exists fullrates (
       date text primary key not null,
       data text not null
     )
   `,
-  `
-    alter table items add value number
-  `
+  `alter table items add value number`,
+  `alter table mapruns add runinfo text`,
+  `create table if not exists gear ( timestamp text primary key not null, data text not null )`
+
 ];
 
 module.exports = DB;

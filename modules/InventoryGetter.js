@@ -26,6 +26,7 @@ class InventoryGetter extends EventEmitter {
 
     this.on("xp", XPTracker.logXP);
     this.on("equipment", KillTracker.logKillCount);
+    this.on("equipment", this.logEquipment);
 
     logger.info(`Inventory getter started with query path ${this.queryPath}`);
 
@@ -187,6 +188,29 @@ class InventoryGetter extends EventEmitter {
       equippedItems: equippedItems
     };
   }
+  
+  logEquipment(timestamp, data) {
+    var dataString = JSON.stringify(data);
+    DB.get("select data from gear where timestamp < :timestamp order by timestamp desc limit 1", [timestamp], (err, row) => {
+      if(err) {
+        logger.info(`Error checking previous gear: ${err}`);
+      } else {
+        if(row && dataString == row.data) {
+          logger.info("No change in gear, not updating");
+        } else {
+          DB.run(
+            "insert into gear(timestamp, data) values(?, ?)", [timestamp, dataString], (err) => {
+              if (err) {
+                logger.info(`Unable to update last gear: ${err}`);
+              } else {
+                logger.info(`Updated last gear at ${timestamp} (length: ${dataString.length})`);
+              }
+            }
+          );
+        }
+      }
+    });
+  }  
 
 }
 
