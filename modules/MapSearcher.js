@@ -69,7 +69,8 @@ function getProfitByCategory(items) {
     currency: 0,
     maps: 0,
     divCards: 0,
-    other: 0
+    other: 0,
+    simSplint: 0
   };
   for(let i = 0; i < items.length; i++) {
     let cat = ItemCategoryParser.getCategory(items[i]);
@@ -85,6 +86,8 @@ function getProfitByCategory(items) {
         profit.divCards += items[i].chaosValue;
         break;
       default:
+        if items[i].name == "Simulacrum splinter":
+          profit.simSplint++
         profit.other += items[i].chaosValue;
         break;
     }
